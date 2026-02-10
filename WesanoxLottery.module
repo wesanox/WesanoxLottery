@@ -1,0 +1,242 @@
+<?php namespace ProcessWire;
+
+class WesanoxLottery extends WireData implements Module {
+    public static function getModuleInfo()
+    {
+        return array(
+            'title' => 'wesanox Lottery module',
+            'summary' => 'A lottery Module to connect lotteries from backend with the PW Frontend by wesanox    .',
+            'version' => '0.1.1',
+            'author' => 'Frittenfritze',
+            'icon' => 'gift',
+            'singular' => true,
+            'autoload' => true,
+            'requires' => array(
+                'ProcessWire>=3.0.210',
+                'PHP>=8.0.0',
+                'FormBuilder>=0.5.5',
+                'WesanoxHelperFields>=0.0.1',
+                'WesanoxHelperForms>=0.0.1'
+            ),
+        );
+    }
+
+    /**
+     * @var Module|_Module|null $helper_forms
+     * @var Module|_Module|null $helper_fields
+     */
+    protected Module|_Module|null $helper_forms;
+    protected Module|_Module|null $helper_fields;
+
+    /**
+     * @var array|string[]
+     */
+    protected array $forms_array = [];
+
+    /**
+     * @var array $fields_array
+     */
+    protected array $fields_array = [];
+
+    /**
+     * @var array|string[]
+     */
+    protected array $matrix_content_items = [
+        'content_lottery_form'
+    ];
+
+    function __construct()
+    {
+        parent::__construct();
+
+        $this->helper_forms = $this->modules->get('WesanoxHelperForms');
+        $this->helper_fields = $this->modules->get('WesanoxHelperFields');
+
+        $this->forms_array = include $this->config->paths->WesanoxLottery . 'config/forms.php';
+        $this->fields_array = include $this->config->paths->WesanoxLottery . 'config/fields.php';
+    }
+
+    /**
+     * @return void
+     */
+    public function init(): void
+    {
+        $this->formCustomerCreate();
+    }
+
+    /**
+     * @return void
+     * @throws WirePermissionException
+     */
+    public function ___install(): void
+    {
+        /**
+         * create forms
+         */
+        $this->helper_forms->createForm($this->forms_array);
+
+        /**
+         * create fields
+         */
+        foreach ($this->fields_array as $field_array) {
+            $this->helper_fields->createFields($field_array);
+        }
+
+        /**
+         * add Matrix item and copy item files
+         */
+        $this->addMatrixItem($this->fields);
+
+        /**
+         * install/copy matrix item files
+         */
+        foreach ($this->matrix_content_items as $item) {
+            $matrix_file = $this->config->paths->WesanoxLottery . 'src/fields/' . $item . '/' .  $item . '.php';
+            $target_file = $this->config->paths->templates . 'fields/matrix_content/' . $item . '/' . $item . '.php';
+            $target_dir = dirname($target_file);
+
+            if(!is_dir($target_dir)) {
+                $this->files->mkdir($target_dir, true);
+            }
+
+            if (!is_file($target_file)) {
+                $this->files->copy($matrix_file, $target_file);
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function ___uninstall(): void
+    {
+        /**
+         * delete forms
+         */
+        $this->helper_forms->deleteForm($this->forms_array);
+        /**
+         * delete fields
+         */
+        $this->helper_fields->deleteFields($this->fields_array, 'matrix_content', $this->matrix_content_items);
+
+        /**
+         * delete matrix item files
+         */
+        foreach ($this->matrix_content_items as $item) {
+            $target_file = $this->config->paths->templates . 'fields/matrix_content/' . $item . '/' . $item . '.php';
+            $target_dir = dirname($target_file);
+
+            if (is_file($target_file)) {
+                $this->files->unlink($target_file);
+                $this->files->rmdir($target_dir);
+            }
+        }
+    }
+
+    /**
+     * @param $fields
+     *
+     * @return void
+     * @throws WirePermissionException
+     */
+    private function addMatrixItem($fields): void
+    {
+        /**
+         * Add new item to matrix_content
+         */
+        if($fields->get('matrix_content')) {
+            $id_dynamic_api = $fields->get('dynamic_api')->id;
+            $id_text_lottery_id = $fields->get('text_lottery_id')->id;
+            $id_text_lottery_key = $fields->get('text_lottery_key')->id;
+
+            $f = $fields->get('matrix_content');
+
+            $matrix_template = $f->type->getMatrixTemplate($f);
+
+            $key = $this->helper_fields->getMatrixKey('matrix_content') + 1;
+
+            $f->setArray([
+                "matrix{$key}_name"   => 'content_lottery_form',
+                "matrix{$key}_label"  => 'Gewinnspielformular',
+                "matrix{$key}_head"   => '{matrix_label} [• {matrix_summary}]',
+                "matrix{$key}_fields" => [
+                    1 => $id_dynamic_api,
+                    2 => $id_text_lottery_id,
+                    3 => $id_text_lottery_key,
+                ],
+                "matrix{$key}_sort"   => $key,
+            ]);
+
+            $f->save();
+
+            $matrix_template->fieldgroup->add('dynamic_api');
+            $matrix_template->fieldgroup->add('text_lottery_id');
+            $matrix_template->fieldgroup->add('text_lottery_key');
+            $matrix_template->fieldgroup->save();
+
+            $matrix_template->save();
+        }
+    }
+
+    /**
+     * @param $api_id
+     * @param $lottery_id
+     *
+     * @return false|mixed
+     *
+     * @throws WirePermissionException
+     */
+    public function getLottery($api_id, $lottery_id)
+    {
+        if( ! $api_id || ! $lottery_id ) return false;
+
+        $lottery_response = json_decode($this->modules->get('WesanoxApi')->requestByApiId((int)$api_id, 'lottery/' . $lottery_id));
+
+        if ($lottery_response) {
+            return $lottery_response;
+        } else {
+            return $lottery_response->error;
+        }
+    }
+
+    private function formCustomerCreate(): void
+    {
+        $this->forms->addHookAfter('FormBuilderProcessor::processInputDone', function(HookEvent $event) {
+            /** @var FormBuilderProcessor $pro */
+            $pro = $event->object;
+
+            if(!in_array($pro->formName, [
+                'lottery-code',
+                'lottery-normal',
+                'lottery-upload'
+            ])) return;
+
+            $form = $event->arguments(0);
+
+            $event_id       = (string) $form->getChildByName('event_id')?->value;
+            $lottery_key    = (string) $form->getChildByName('lottery_key')?->value;
+            $code           = (string) $form->getChildByName('code')?->value;
+            $email          = (string) $form->getChildByName('e_mail')?->value;
+
+            $api_id = 0;
+
+            foreach ($this->page->matrix_content as $matrix_item) {
+                if ($matrix_item->type == 'content_lottery_form') {
+                    (int) $api_id = $matrix_item->dynamic_api;
+                    break;
+                }
+            }
+
+            $data = [
+                "lottery_key" => $lottery_key,
+                "code" => $code,
+                "customer_firstname" => $form->getChildByName('firstname')?->value,
+                "customer_lastname" => $form->getChildByName('lastname')?->value,
+                "customer_mail" => $email,
+            ];
+
+            $this->modules->get('WesanoxApi')->requestByApiId((int)$api_id, 'lottery/customer/create', [], 'POST', $data);
+        });
+    }
+}
+
