@@ -1,11 +1,12 @@
-<?php namespace ProcessWire;
+<?php
+namespace ProcessWire;
 
 class WesanoxLottery extends WireData implements Module {
     public static function getModuleInfo()
     {
         return array(
-            'title' => 'wesanox Lottery module',
-            'summary' => 'A lottery Module to connect lotteries from backend with the PW Frontend by wesanox    .',
+            'title' => 'wesanox Lottery',
+            'summary' => 'A lottery Module to connect lotteries from backend with the PW Frontend by wesanox.',
             'version' => '0.1.1',
             'author' => 'Frittenfritze',
             'icon' => 'gift',
@@ -16,10 +17,14 @@ class WesanoxLottery extends WireData implements Module {
                 'PHP>=8.0.0',
                 'FormBuilder>=0.5.5',
                 'WesanoxHelperFields>=0.0.1',
-                'WesanoxHelperForms>=0.0.1'
+                'WesanoxHelperForms>=0.0.1',
+                'WesanoxApi>=0.0.1'
             ),
         );
     }
+
+
+    protected ?LotteryRequests $requests = null;
 
     /**
      * @var Module|_Module|null $helper_forms
@@ -42,9 +47,16 @@ class WesanoxLottery extends WireData implements Module {
      * @var array|string[]
      */
     protected array $matrix_content_items = [
-        'content_lottery_form'
+        'content_lottery_form',
+        'content_lottery_register',
+        'content_lottery_winning',
     ];
 
+    /**
+     * WesanoxLottery constructor.
+     *
+     * @throws WirePermissionException
+     */
     function __construct()
     {
         parent::__construct();
@@ -59,9 +71,55 @@ class WesanoxLottery extends WireData implements Module {
     /**
      * @return void
      */
-    public function init(): void
+    public function ready(): void
     {
-        $this->formCustomerCreate();
+        require_once __DIR__ . '/src/classes/lottery/LotteryRequests.php';
+        require_once __DIR__ . '/src/classes/form/FormCustomerCreate.php';
+        require_once __DIR__ . '/src/classes/form/FormWinnerUpdate.php';
+        require_once __DIR__ . '/src/classes/form/FormWinnerRender.php';
+        require_once __DIR__ . '/src/classes/form/FormStylesRender.php';
+        require_once __DIR__ . '/src/classes/form/FormLinksRender.php';
+
+        $this->formStylesRender = new FormStylesRender();
+
+        $this->formStylesRender->handle();
+    }
+
+    /**
+     * @return LotteryRequests
+     */
+    public function lotteryRequests(): LotteryRequests
+    {
+        return new LotteryRequests();
+    }
+
+    /**
+     * @return FormCustomerCreate
+     */
+    public function formCustomerCreate(): FormCustomerCreate
+    {
+        return new FormCustomerCreate();
+    }
+
+    /**
+     * @return FormWinnerUpdate
+     */
+    public function formWinnerUpdate(): FormWinnerUpdate
+    {
+        return new FormWinnerUpdate();
+    }
+
+    /**
+     * @return FormWinnerRender
+     */
+    public function formWinnerRender(): FormWinnerRender
+    {
+        return new FormWinnerRender();
+    }
+
+    public function formLinksRender(): FormLinksRender
+    {
+        return new FormLinksRender();
     }
 
     /**
@@ -91,17 +149,17 @@ class WesanoxLottery extends WireData implements Module {
          * install/copy matrix item files
          */
         foreach ($this->matrix_content_items as $item) {
-            $matrix_file = $this->config->paths->WesanoxLottery . 'src/fields/' . $item . '/' .  $item . '.php';
-            $target_file = $this->config->paths->templates . 'fields/matrix_content/' . $item . '/' . $item . '.php';
-            $target_dir = dirname($target_file);
+            $source_dir = $this->config->paths->WesanoxLottery . 'src/fields/{$item}/';
+            $target_dir = $this->config->paths->templates . 'fields/matrix_content/{$item}/';
 
             if(!is_dir($target_dir)) {
                 $this->files->mkdir($target_dir, true);
             }
 
-            if (!is_file($target_file)) {
-                $this->files->copy($matrix_file, $target_file);
-            }
+            $this->files->copy($source_dir, $target_dir, [
+                'recursive' => true,
+                'overwrite' => false
+            ]);
         }
     }
 
@@ -123,12 +181,10 @@ class WesanoxLottery extends WireData implements Module {
          * delete matrix item files
          */
         foreach ($this->matrix_content_items as $item) {
-            $target_file = $this->config->paths->templates . 'fields/matrix_content/' . $item . '/' . $item . '.php';
-            $target_dir = dirname($target_file);
+            $target_dir = $this->config->paths->templates . 'fields/matrix_content/{$item}/';
 
-            if (is_file($target_file)) {
-                $this->files->unlink($target_file);
-                $this->files->rmdir($target_dir);
+            if (is_dir($target_dir)) {
+                $this->files->rmdir($target_dir, true);
             }
         }
     }
@@ -145,9 +201,12 @@ class WesanoxLottery extends WireData implements Module {
          * Add new item to matrix_content
          */
         if($fields->get('matrix_content')) {
+            $id_lottery_text = $fields->get('text_lottery_form')->id;
             $id_dynamic_api = $fields->get('dynamic_api')->id;
             $id_text_lottery_id = $fields->get('text_lottery_id')->id;
             $id_text_lottery_key = $fields->get('text_lottery_key')->id;
+            $id_link_lottery_privacy = $fields->get('link_lottery_privacy')->id;
+            $id_link_lottery_terms = $fields->get('link_lottery_terms')->id;
 
             $f = $fields->get('matrix_content');
 
@@ -163,6 +222,36 @@ class WesanoxLottery extends WireData implements Module {
                     1 => $id_dynamic_api,
                     2 => $id_text_lottery_id,
                     3 => $id_text_lottery_key,
+                    4 => $id_lottery_text,
+                    5 => $id_link_lottery_privacy,
+                    6 => $id_link_lottery_terms
+                ],
+                "matrix{$key}_sort"   => $key,
+            ]);
+
+            $key = $key + 1;
+
+            $f->setArray([
+                "matrix{$key}_name"   => 'content_lottery_register',
+                "matrix{$key}_label"  => 'Gewinnspielregistierung',
+                "matrix{$key}_head"   => '{matrix_label} [• {matrix_summary}]',
+                "matrix{$key}_fields" => [
+                    1 => $id_dynamic_api,
+                ],
+                "matrix{$key}_sort"   => $key,
+            ]);
+
+            $key = $key + 1;
+
+            $f->setArray([
+                "matrix{$key}_name"   => 'content_lottery_winning',
+                "matrix{$key}_label"  => 'Gewinnspielabfrage',
+                "matrix{$key}_head"   => '{matrix_label} [• {matrix_summary}]',
+                "matrix{$key}_fields" => [
+                    1 => $id_dynamic_api,
+                    2 => $id_lottery_text,
+                    3 => $id_link_lottery_privacy,
+                    4 => $id_link_lottery_terms
                 ],
                 "matrix{$key}_sort"   => $key,
             ]);
@@ -170,73 +259,15 @@ class WesanoxLottery extends WireData implements Module {
             $f->save();
 
             $matrix_template->fieldgroup->add('dynamic_api');
+            $matrix_template->fieldgroup->add('text_lottery_form');
             $matrix_template->fieldgroup->add('text_lottery_id');
             $matrix_template->fieldgroup->add('text_lottery_key');
+            $matrix_template->fieldgroup->add('link_lottery_privacy');
+            $matrix_template->fieldgroup->add('link_lottery_terms');
             $matrix_template->fieldgroup->save();
 
             $matrix_template->save();
         }
-    }
-
-    /**
-     * @param $api_id
-     * @param $lottery_id
-     *
-     * @return false|mixed
-     *
-     * @throws WirePermissionException
-     */
-    public function getLottery($api_id, $lottery_id)
-    {
-        if( ! $api_id || ! $lottery_id ) return false;
-
-        $lottery_response = json_decode($this->modules->get('WesanoxApi')->requestByApiId((int)$api_id, 'lottery/' . $lottery_id));
-
-        if ($lottery_response) {
-            return $lottery_response;
-        } else {
-            return $lottery_response->error;
-        }
-    }
-
-    private function formCustomerCreate(): void
-    {
-        $this->forms->addHookAfter('FormBuilderProcessor::processInputDone', function(HookEvent $event) {
-            /** @var FormBuilderProcessor $pro */
-            $pro = $event->object;
-
-            if(!in_array($pro->formName, [
-                'lottery-code',
-                'lottery-normal',
-                'lottery-upload'
-            ])) return;
-
-            $form = $event->arguments(0);
-
-            $event_id       = (string) $form->getChildByName('event_id')?->value;
-            $lottery_key    = (string) $form->getChildByName('lottery_key')?->value;
-            $code           = (string) $form->getChildByName('code')?->value;
-            $email          = (string) $form->getChildByName('e_mail')?->value;
-
-            $api_id = 0;
-
-            foreach ($this->page->matrix_content as $matrix_item) {
-                if ($matrix_item->type == 'content_lottery_form') {
-                    (int) $api_id = $matrix_item->dynamic_api;
-                    break;
-                }
-            }
-
-            $data = [
-                "lottery_key" => $lottery_key,
-                "code" => $code,
-                "customer_firstname" => $form->getChildByName('firstname')?->value,
-                "customer_lastname" => $form->getChildByName('lastname')?->value,
-                "customer_mail" => $email,
-            ];
-
-            $this->modules->get('WesanoxApi')->requestByApiId((int)$api_id, 'lottery/customer/create', [], 'POST', $data);
-        });
     }
 }
 

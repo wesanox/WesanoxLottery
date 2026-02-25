@@ -1,0 +1,91 @@
+.FormBuilderErrors {
+    .alert {
+        background-color: rgb(220,53,69) !important;
+        color: #fff !important;
+    }
+}
+
+.Inputfields {
+    font-family: "Roboto Condensed", sans-serif;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+
+    .InputfieldCheckbox {
+        flex: 0 0 100%;
+        width: 100% !important;
+
+        .InputfieldContent > label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .pw-no-select {
+            flex: 1 1 auto;
+        }
+    }
+
+    input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border: 1px solid #cfcfcf;
+        border-radius: .25em;
+        background: #fff;
+        margin-top: 9px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        background-size: contain !important;
+
+        &:hover {
+            border-color: #85bd2d;
+        }
+
+        &:checked {
+            background-color: #85bd2d;
+            border-color: #85bd2d;
+        }
+
+        &:checked::after {
+            content: "";
+            position: absolute;
+            left: 3px;
+            width: 5px;
+            bottom: 3px;
+            height: 7px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(133, 189, 45, 0.35);
+        }
+    }
+
+    .InputfieldStateError {
+        input[type="text"],
+        input[type="email"] {
+            border-color: #d10000;
+            box-shadow: 0 0 0 3px rgba(209, 0, 0, 0.12);
+        }
+    }
+
+    #wrap_Inputfield_checkbox_datenschutz .pw-no-select::after {
+        content: " *";
+        color: #d10000;
+        font-weight: 700;
+    }
+
+    .InputfieldContent {
+        .pw-no-select {
+            font-size: 15px;
+        }
+    }
+}
