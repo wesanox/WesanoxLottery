@@ -589,7 +589,6 @@ return [
                 "birthday": {
                     "type": "Datetime",
                     "label": "Geburtstag*",
-                    "required": 1,
                     "columnWidth": 0,
                     "collapsed": "0",
                     "inputType": "html",

@@ -9,9 +9,9 @@ class FormWinnerRender extends WesanoxLottery
      *
      * @return void
      */
-    public function handle($prize): void
+    public function handle($prize, $hash): void
     {
-        $this->forms->addHookBefore('FormBuilderProcessor::renderReady', function(HookEvent $e) use ($prize) {
+        $this->forms->addHookBefore('FormBuilderProcessor::renderReady', function(HookEvent $e) use ($prize, $hash) {
             /** @var FormBuilderProcessor $pro */
             $pro = $e->object;
 
@@ -21,7 +21,10 @@ class FormWinnerRender extends WesanoxLottery
 
             $form = $e->arguments(0);
 
+            $form->attr('action', './?winner=' . $hash);
+
             $info = $form->getByName('info');
+            $birthday = $form->getByName('birthday');
 
             if ($prize->prize_info_needed) {
                 $info->required = $prize->prize_info_required ?? false;
@@ -31,6 +34,14 @@ class FormWinnerRender extends WesanoxLottery
                 $info->label = $prize->prize_info_label . $required_text ?? "Zusatzinformationen" . $required_text;
             } else {
                 $info->addClass('d-none', 'wrapClass');
+            }
+
+            if($prize->prize_birthday_needed) {
+                $birthday->required = true;
+
+                if ($prize->prize_info_needed) $info->addClass('ps-lg-2', 'wrapClass');
+            } else {
+                $birthday->addClass('d-none', 'wrapClass');
             }
 
             $winning_fields = ['firstname', 'lastname', 'mail'];

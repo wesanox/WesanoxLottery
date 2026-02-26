@@ -8,7 +8,7 @@ if (wire()->input->get->winner != '') {
 
     $response = $lottery_module->lotteryRequests()->verifyWinning($page->dynamic_api, $hash);
 
-    $lottery_module->formWinnerRender()->handle($response->data->prize);
+    $lottery_module->formWinnerRender()->handle($response->data->prize, $hash);
 
     $customer_id = $response->data->lottery_customer->customer_id;
 
@@ -33,7 +33,7 @@ $lottery_module->formWinnerUpdate()->handle($page->dynamic_api);
             'mobile' => $customer->data->customer_mobile ?? '',
             'birthday' => $customer->data->customer_birthday ?? '',
             'winner_id' => $customer->data->id,
-            'notice' => $page->text_lottery_form
+            'notice' => mb_convert_encoding($page->text_lottery_form, 'ISO-8859-1', 'UTF-8')
     ]);
     ?>
 </div>

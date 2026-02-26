@@ -31,7 +31,7 @@ class FormWinnerUpdate extends WesanoxLottery
                 $city       = (string) $form->getChildByName('city')?->value;
                 $phone      = (string) $form->getChildByName('phone')?->value;
                 $mobile     = (string) $form->getChildByName('mobile')?->value;
-                $birthday   = (string) $form->getChildByName('birthday')?->value;
+                $birthday   = (string) $form->getChildByName('birthday')?->value ? date('d.m.Y', $form->getChildByName('birthday')?->value) : '';
                 $info       = (string) $form->getChildByName('info')?->value;
                 $winner_id  = (string) $form->getChildByName('winner_id')?->value;
 
@@ -42,7 +42,7 @@ class FormWinnerUpdate extends WesanoxLottery
                     "customer_city" => $city,
                     "customer_phone" => $phone,
                     "customer_mobile" => $mobile,
-                    "customer_birthday" => date('d.m.Y',$birthday),
+                    "customer_birthday" => $birthday,
                     'customer_special' => $info
                 ];
 
