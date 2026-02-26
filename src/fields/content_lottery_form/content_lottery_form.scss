@@ -12,19 +12,45 @@
     flex-wrap: wrap;
     align-items: flex-start;
 
+    .Inputfield {
+        &Checkbox {
+            flex: 0 0 100%;
+            width: 100% !important;
 
-    .InputfieldCheckbox {
-        flex: 0 0 100%;
-        width: 100% !important;
+            .InputfieldContent > label {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+            }
 
-        .InputfieldContent > label {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            .pw-no-select {
+                flex: 1 1 auto;
+            }
         }
 
-        .pw-no-select {
-            flex: 1 1 auto;
+        &FormBuilderFileList {
+            list-style: none;
+            padding: 0;
+        }
+
+        &StateError {
+            input[type="text"],
+            input[type="email"] {
+                border-color: #d10000;
+                box-shadow: 0 0 0 3px rgba(209, 0, 0, 0.12);
+            }
+        }
+
+        &Content {
+            .pw-no-select {
+                font-size: 15px;
+            }
+        }
+
+        &Markup {
+            p {
+                font-size: 15px;
+            }
         }
     }
 
@@ -69,23 +95,9 @@
         }
     }
 
-    .InputfieldStateError {
-        input[type="text"],
-        input[type="email"] {
-            border-color: #d10000;
-            box-shadow: 0 0 0 3px rgba(209, 0, 0, 0.12);
-        }
-    }
-
     #wrap_Inputfield_checkbox_datenschutz .pw-no-select::after {
         content: " *";
         color: #d10000;
         font-weight: 700;
-    }
-
-    .InputfieldContent {
-        .pw-no-select {
-            font-size: 15px;
-        }
     }
 }
