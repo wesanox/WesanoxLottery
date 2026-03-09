@@ -33,7 +33,7 @@ $lottery_module->formWinnerUpdate()->handle($page->dynamic_api);
             'mobile' => $customer->data->customer_mobile ?? '',
             'birthday' => $customer->data->customer_birthday ?? '',
             'winner_id' => $customer->data->id,
-            'notice' => mb_convert_encoding($page->text_lottery_form, 'ISO-8859-1', 'UTF-8')
+            'notice' => $page->text_lottery_form
     ]);
     ?>
 </div>

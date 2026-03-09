@@ -27,7 +27,7 @@ if($lottery->ok) :
             echo wire()->forms->render($form_string, [
                     'event_id' => $page->text_lottery_id,
                     'lottery_key' => $page->text_lottery_key,
-                    'notice' => mb_convert_encoding($page->text_lottery_form, 'ISO-8859-1', 'UTF-8')
+                    'notice' => $page->text_lottery_form
             ]);
             ?>
         <?php endif; ?>

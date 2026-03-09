@@ -30,7 +30,7 @@ class FormLinksRender extends WesanoxLottery
                 $privacy_text
             );
 
-            $e->return = $privacy_text;
+            $e->return = mb_convert_encoding($privacy_text, 'ISO-8859-1', 'UTF-8');
         });
     }
 
@@ -40,8 +40,6 @@ class FormLinksRender extends WesanoxLottery
     private function formLinksTerms($link_terms): void
     {
         $this->forms->addHookAfter('FormBuilderProcessor::wrapOutput', function($e) use ($link_terms) {
-            bd($link_terms);
-
             $terms_text = $e->return;
 
             $terms_text = str_replace(
@@ -50,7 +48,7 @@ class FormLinksRender extends WesanoxLottery
                 $terms_text
             );
 
-            $e->return = $terms_text;
+            $e->return = mb_convert_encoding($terms_text, 'ISO-8859-1', 'UTF-8');
         });
     }
 }
