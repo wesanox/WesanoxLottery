@@ -55,7 +55,7 @@ return [
             "children": {
                 "code": {
                     "type": "Text",
-                    "label": "Code eingeben*",
+                    "label": "Promocode oder Gutschein-Code",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -63,13 +63,12 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "firstname": {
                     "type": "Text",
                     "label": "Vorname",
-                    "required": false,
+                    "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
                     "minlength": 0,
@@ -80,7 +79,7 @@ return [
                 },
                 "lastname": {
                     "type": "Text",
-                    "label": "Nachname*",
+                    "label": "Nachname",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -88,8 +87,7 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "addClass": "wrap:col-12 col-lg-6 ps-lg-2 mb-3\ninput:form-control",
-                    "requiredAttr": 1
+                    "addClass": "wrap:col-12 col-lg-6 ps-lg-2 mb-3\ninput:form-control"
                 },
                 "e_mail": {
                     "type": "Email",
@@ -103,7 +101,6 @@ return [
                     "size": 0,
                     "confirm": 1,
                     "allowIDN": "0",
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "event_id": {
@@ -119,15 +116,6 @@ return [
                     "required": false,
                     "columnWidth": 0,
                     "addClass": "wrap:d-none"
-                },
-                "checkbox_club": {
-                    "type": "Checkbox",
-                    "label": "Ich möchte die kostenlosen Koch Club News als PDF in Zukunft per E-Mail erhalten.",
-                    "required": false,
-                    "columnWidth": 0,
-                    "collapsed": "0",
-                    "checkedValue": "1",
-                    "addClass": "header:visually-hidden"
                 },
                 "checkbox_action": {
                     "type": "Checkbox",
@@ -216,8 +204,8 @@ return [
             "children": {
                 "firstname": {
                     "type": "Text",
-                    "label": "Vorname*",
-                    "required": false,
+                    "label": "Vorname",
+                    "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
                     "minlength": 0,
@@ -228,7 +216,7 @@ return [
                 },
                 "lastname": {
                     "type": "Text",
-                    "label": "Nachname*",
+                    "label": "Nachname",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -236,12 +224,11 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput: form-control"
                 },
                 "address": {
                     "type": "Text",
-                    "label": "Straße*",
+                    "label": "Straße",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -249,13 +236,12 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "zip": {
                     "type": "Text",
-                    "label": "PLZ*",
-                    "required": false,
+                    "label": "PLZ",
+                    "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
                     "minlength": 0,
@@ -266,11 +252,10 @@ return [
                 },
                 "city": {
                     "type": "Text",
-                    "label": "Ort*",
+                    "label": "Ort",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
-                    "requiredAttr": 1,
                     "minlength": 0,
                     "maxlength": 2048,
                     "showCount": "0",
@@ -279,7 +264,7 @@ return [
                 },
                 "e_mail": {
                     "type": "Email",
-                    "label": "E-Mail*",
+                    "label": "E-Mail",
                     "required": 1,
                     "columnWidth": 0,
                     "collapsed": "0",
@@ -289,13 +274,11 @@ return [
                     "size": 0,
                     "confirm": 1,
                     "allowIDN": "0",
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "phone": {
                     "type": "Text",
                     "label": "Telefon",
-                    "required": false,
                     "columnWidth": 0,
                     "collapsed": "0",
                     "addClass": "wrap:col-12 mb-3\ninput:form-control",
@@ -391,7 +374,7 @@ return [
             "children": {
                 "receipt": {
                     "type": "FormBuilderFile",
-                    "label": "Kassenbon hier hochladen*",
+                    "label": "Kassenbon hier hochladen",
                     "required": 1,
                     "columnWidth": 0,
                     "collapsed": "0",
@@ -408,7 +391,7 @@ return [
                 },
                 "firstname": {
                     "type": "Text",
-                    "label": "Vorname*",
+                    "label": "Vorname",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -416,12 +399,11 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "lastname": {
                     "type": "Text",
-                    "label": "Nachname*",
+                    "label": "Nachname",
                     "required": 1,
                     "columnWidth": 100,
                     "collapsed": "0",
@@ -429,12 +411,11 @@ return [
                     "maxlength": 2048,
                     "showCount": "0",
                     "size": 0,
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "e_mail": {
                     "type": "Email",
-                    "label": "E-Mail*",
+                    "label": "E-Mail",
                     "required": 1,
                     "columnWidth": 0,
                     "collapsed": "0",
@@ -444,7 +425,6 @@ return [
                     "size": 0,
                     "confirm": 1,
                     "allowIDN": "0",
-                    "requiredAttr": 1,
                     "addClass": "wrap:col-12 mb-3\ninput:form-control"
                 },
                 "checkbox_privacy": {
