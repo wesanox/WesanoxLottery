@@ -75,6 +75,7 @@ class WesanoxLottery extends WireData implements Module {
     {
         require_once __DIR__ . '/src/classes/lottery/LotteryRequests.php';
         require_once __DIR__ . '/src/classes/form/FormCustomerCreate.php';
+        require_once __DIR__ . '/src/classes/form/FormErrorHandler.php';
         require_once __DIR__ . '/src/classes/form/FormWinnerUpdate.php';
         require_once __DIR__ . '/src/classes/form/FormWinnerRender.php';
         require_once __DIR__ . '/src/classes/form/FormStylesRender.php';
@@ -117,9 +118,20 @@ class WesanoxLottery extends WireData implements Module {
         return new FormWinnerRender();
     }
 
+    /**
+     * @return FormLinksRender
+     */
     public function formLinksRender(): FormLinksRender
     {
         return new FormLinksRender();
+    }
+
+    /**
+     * @return FormErrorHandler
+     */
+    public function formErrorHandler(): FormErrorHandler
+    {
+        return new FormErrorHandler();
     }
 
     /**

@@ -14,6 +14,7 @@ $form_string = match ($lottery->data->lottery_category) {
 
 $lottery_module->formCustomerCreate()->handle($page->dynamic_api);
 $lottery_module->formLinksRender()->handle($page->link_lottery_privacy->url, $page->link_lottery_terms->url);
+$lottery_module->formErrorHandler()->handle();
 
 if($lottery->ok) :
     ?>

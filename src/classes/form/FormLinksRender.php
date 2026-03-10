@@ -30,7 +30,7 @@ class FormLinksRender extends WesanoxLottery
                 $privacy_text
             );
 
-            $e->return = mb_convert_encoding($privacy_text, 'ISO-8859-1', 'UTF-8');
+            $e->return = $privacy_text;
         });
     }
 
@@ -48,7 +48,7 @@ class FormLinksRender extends WesanoxLottery
                 $terms_text
             );
 
-            $e->return = mb_convert_encoding($terms_text, 'ISO-8859-1', 'UTF-8');
+            $e->return = $terms_text;
         });
     }
 }

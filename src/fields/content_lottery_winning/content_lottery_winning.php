@@ -19,6 +19,7 @@ if (wire()->input->get->winner != '') {
 
 $lottery_module->formLinksRender()->handle($page->link_lottery_privacy->url, $page->link_lottery_terms->url);
 $lottery_module->formWinnerUpdate()->handle($page->dynamic_api);
+$lottery_module->formErrorHandler()->handle();
 ?>
 <div>
     <?php
