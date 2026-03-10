@@ -67,11 +67,16 @@ class FormErrorHandler extends WesanoxLottery
                 }
 
                 $label = trim(preg_replace('/\s+/', ' ', $labelNode->textContent));
-                $message = "Bitte fülle {$label} ein";
+                $message = "Bitte fülle das Feld '{$label}' aus!";
 
                 while ($error->firstChild) {
                     $error->removeChild($error->firstChild);
                 }
+
+                $icon = $dom->createElement('i');
+                $icon->setAttribute('class', 'fa fa-exclamation-triangle me-1');
+
+                $error->appendChild($icon);
 
                 $error->appendChild($dom->createTextNode($message));
             }
