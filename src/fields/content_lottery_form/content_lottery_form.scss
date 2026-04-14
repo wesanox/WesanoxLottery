@@ -33,10 +33,9 @@
             padding: 0;
         }
 
-        &StateError {
-            input[type="text"],
-            input[type="email"] {
-                border-color: #d10000;
+        &.InputfieldStateError {
+            input {
+                border-color: #d10000!important;
                 box-shadow: 0 0 0 3px rgba(209, 0, 0, 0.12);
             }
         }

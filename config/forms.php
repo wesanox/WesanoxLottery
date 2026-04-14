@@ -491,7 +491,7 @@ return [
             "partialEntryDays": 14,
             "spamEntryDays": 7,
             "submitText": "DATEN ABSENDEN",
-            "successMessage": "Danke - deine Daten haben wir erhalten!",
+            "successMessage": "Vielen Dank. Wir haben deine Daten erhalten. Dein Gewinn wird dir innerhalb der nächsten 4 Wochen zugestellt.",
             "errorMessage": "Hier ist etwas schief gelaufen - bitte versuche es erneut!",
             "mobilePx": 0,
             "frBasic_noLoad": [],

@@ -21,7 +21,7 @@ if (wire()->input->get->confirm != '') {
     <div class="container">
         <div class="row">
             <div class="col-12 register-container">
-                <div class="p-4 text-center">
+                <div class="p-lg-4 text-center">
                     <div class="h2 small fonts text-red">
                         <strong>
                             Teilnahmebestätigung

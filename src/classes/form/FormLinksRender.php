@@ -25,8 +25,8 @@ class FormLinksRender extends WesanoxLottery
             $privacy_text = $e->return;
 
             $privacy_text = str_replace(
-                'Datenschutzhinweise',
-                '<a href="' . $link_privacy . '" title=Datenschutzhinweise" aria-label="Datenschutzhinweise" target="_blank">Datenschutzhinweise</a>',
+                ['Datenschutzhinweise', 'Bestätigen'],
+                ['<a href="' . $link_privacy . '" title=Datenschutzhinweise" aria-label="Datenschutzhinweise" target="_blank">Datenschutzhinweise</a>','E-Mail-Adresse bestätigen'],
                 $privacy_text
             );
 

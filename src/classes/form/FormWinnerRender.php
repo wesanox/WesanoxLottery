@@ -27,7 +27,7 @@ class FormWinnerRender extends WesanoxLottery
             $birthday = $form->getByName('birthday');
 
             if ($prize->prize_info_needed) {
-                $info->required = $prize->prize_info_required ?? false;
+                $info->required = (bool)$prize->prize_info_required;
 
                 $required_text = ($info->required) ? '*' : '';
 
@@ -50,7 +50,7 @@ class FormWinnerRender extends WesanoxLottery
                 $winning_field = $form->getByName($name);
 
                 if ($winning_field) {
-                    $winning_field->attr('disabled', 'disabled');
+                    $winning_field->attr('readonly', 'readonly');
                 }
             }
         });

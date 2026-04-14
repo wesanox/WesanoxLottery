@@ -33,7 +33,29 @@ class FormErrorHandler extends WesanoxLottery
                 "//*[contains(concat(' ', normalize-space(@class), ' '), ' FormBuilderErrors ')]"
             );
 
+            $allowedMessages = [
+                'This form appears to have already been submitted',
+                'Der Code wurde in diesem Gewinnspiel bereits verwendet',
+                'Der Code ist ungültig.'
+            ];
+
             foreach ($errorBlocks as $node) {
+
+                $text = trim($node->textContent);
+
+                $keep = false;
+
+                foreach ($allowedMessages as $allowed) {
+                    if (stripos($text, $allowed) !== false) {
+                        $keep = true;
+                        break;
+                    }
+                }
+
+                if ($keep) {
+                    continue;
+                }
+
                 $node->parentNode?->removeChild($node);
             }
 

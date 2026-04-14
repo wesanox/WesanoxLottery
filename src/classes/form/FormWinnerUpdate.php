@@ -11,9 +11,9 @@ class FormWinnerUpdate extends WesanoxLottery
      *
      * @throws WirePermissionException
      */
-    public function handle(int $api_id): void
+    public function handle($prize, int $api_id): void
     {
-        $this->forms->addHookAfter('FormBuilderProcessor::processInputDone', function(HookEvent $e) use ($api_id) {
+        $this->forms->addHookAfter('FormBuilderProcessor::processInputDone', function(HookEvent $e) use ($prize, $api_id) {
             /** @var FormBuilderProcessor $pro */
             $pro = $e->object;
 
@@ -24,6 +24,13 @@ class FormWinnerUpdate extends WesanoxLottery
             $form = $e->arguments(0);
 
             $privacy = (boolean) $form->getChildByName('checkbox_privacy')?->value;
+
+            $info = trim((string) $form->getChildByName('info')?->value);
+
+            if ($prize->prize_info_needed && $prize->prize_info_required && $info === '') {
+                $form->getChildByName('info')?->error('Bitte fülle dieses Feld "' . $prize->prize_info_label . '" aus.');
+                return;
+            }
 
             if ($privacy) {
                 $address    = (string) $form->getChildByName('address')?->value;
