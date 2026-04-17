@@ -26,22 +26,36 @@ class FormWinnerRender extends WesanoxLottery
             $info = $form->getByName('info');
             $birthday = $form->getByName('birthday');
 
-            if ($prize->prize_info_needed) {
-                $info->required = (bool)$prize->prize_info_required;
+            $info_needed = (bool)($prize->prize_info_needed ?? false);
+            $info_required = (bool)($prize->prize_info_required ?? false);
+            $birthday_needed = (bool)($prize->prize_birthday_needed ?? false);
 
-                $required_text = ($info->required) ? '*' : '';
+            if ($info) {
+                if ($info_needed) {
+                    $info->required = $info_required;
 
-                $info->label = $prize->prize_info_label . $required_text ?? "Zusatzinformationen" . $required_text;
-            } else {
-                $info->addClass('d-none', 'wrapClass');
+                    $required_text = ($info->required) ? '*' : '';
+                    $info_label = trim((string)($prize->prize_info_label ?? ''));
+                    $info->label = (($info_label !== '') ? $info_label : 'Zusatzinformationen') . $required_text;
+                } else {
+                    // Hidden fields must never keep required validation.
+                    $info->required = false;
+                    $info->attr('required', null);
+                    $info->addClass('d-none', 'wrapClass');
+                }
             }
 
-            if($prize->prize_birthday_needed) {
-                $birthday->required = true;
+            if ($birthday) {
+                if ($birthday_needed) {
+                    $birthday->required = true;
 
-                if ($prize->prize_info_needed) $info->addClass('ps-lg-2', 'wrapClass');
-            } else {
-                $birthday->addClass('d-none', 'wrapClass');
+                    if ($info_needed && $info) $info->addClass('ps-lg-2', 'wrapClass');
+                } else {
+                    // Hidden fields must never keep required validation.
+                    $birthday->required = false;
+                    $birthday->attr('required', null);
+                    $birthday->addClass('d-none', 'wrapClass');
+                }
             }
 
             $winning_fields = ['firstname', 'lastname', 'mail'];
