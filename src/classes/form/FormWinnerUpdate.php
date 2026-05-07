@@ -23,8 +23,6 @@ class FormWinnerUpdate extends WesanoxLottery
 
             $form = $e->arguments(0);
 
-            bd($form);
-
             $privacy = (boolean) $form->getChildByName('checkbox_privacy')?->value;
 
             $info = trim((string) $form->getChildByName('info')?->value);
@@ -56,8 +54,6 @@ class FormWinnerUpdate extends WesanoxLottery
                 ];
 
                 $response = json_decode($this->modules->get('WesanoxApi')->requestByApiId($api_id, 'lottery/customer/' . (int) $winner_id, [], 'PUT', $data));
-
-                bd($response);
 
                 if($response->ok) {
                     $form->message($response->message);
